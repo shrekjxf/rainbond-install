@@ -100,9 +100,12 @@ salt-api-conf:
       - pkg: salt-minion-install
 
 # create user for salt-api
-saltapi:
-  user.present:
-    - password: {{ pillar['secretkey'] }}
+#saltapi:
+#  user.present:
+#    - fullname: saltapi
+#    - password: "{{ pillar['secretkey'] }}"
+#    - shell: /usr/sbin/nologin
+
 
 #salt-call --local tls.create_self_signed_cert:
 #  cmd.run:

@@ -486,11 +486,11 @@ System_Check(){
 
   # disk cpu memory
   Echo_Info "Getting Hardware information ..."
-  if [ "$DEBUG" ];then
+  #if [ "$DEBUG" ];then
     Echo_Info "Skip Check Hardware ..."
-  else
-    Get_Hardware_Info && Echo_Ok
-  fi
+  #else
+  #  Get_Hardware_Info && Echo_Ok
+  #fi
   #ipaddr(inet pub) type .mark in .sls
   Echo_Info "Getting Network information ..."
   Check_Net && Echo_Ok
@@ -804,6 +804,6 @@ install_func(){
 
 case $1 in
     *)
-        check_func && init_config ${1:-"online"} && install_func ${@:2}
+        check_func && init_config ${1:-"online"} #&& install_func ${@:2}
     ;;
 esac
