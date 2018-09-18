@@ -5,7 +5,7 @@ secretkey=$(yq r /srv/pillar/rainbond.sls secretkey)
 cat /etc/passwd | grep saltapi || (
     useradd -M -s /sbin/nologin saltapi
     echo saltapi:$secretkey | chpasswd
-    #echo $secretkey | passwd saltapi —stdin
+    #echo $secretkey | passwd saltapi --stdin
 
 for ((i=1;i<=60;i++ ));do
     sleep 1

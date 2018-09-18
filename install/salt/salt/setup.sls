@@ -120,8 +120,6 @@ salt-api:
     - watch:
         - file: /etc/salt/master.d/api.conf
 
-{% if grains['os_family']|lower == 'debian' %}
-
 salt-master-restart:
   cmd.run:
     - name: systemctl restart salt-master.service
@@ -137,7 +135,6 @@ salt-api-restart:
     - name: systemctl restart salt-api.service
     - require:
       - cmd: salt-master-restart
-{% endif %}
 
 test_token:
   cmd.run:
