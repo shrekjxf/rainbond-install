@@ -15,7 +15,7 @@ Support for:
 Plugins Version:
 
 - [Distribution](https://github.com/goodrain/rainbond-install/wiki/Select-Distribution)
-- [Kubernetes v1.10.4](https://github.com/goodrain/kubernetes)
+- [Kubernetes v1.10](https://github.com/goodrain/kubernetes)
 - [Docker v17.05](https://github.com/goodrain/moby)
 - Calico v3.2
 - Etcd v3.2.24
@@ -36,13 +36,7 @@ Plugins Version:
 - Quick start
 
 ```Bash
-# Dev v5.0
-
-git clone --depth 1 -b v5.0 https://github.com/goodrain/rainbond-install.git /opt/rainbond/install
-cd /opt/rainbond/install
-./setup.sh
-
-# Mainline v3.7.1
+# Stable v3.7.2(v3.7)
 
 git clone --depth 1 -b v3.7 https://github.com/goodrain/rainbond-install.git /opt/rainbond/install
 cd /opt/rainbond/install
