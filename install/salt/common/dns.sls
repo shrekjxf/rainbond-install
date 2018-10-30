@@ -1,23 +1,11 @@
 {% if "manage" in grains['id'] %}
 {% set hostip = pillar['vip'] %}
-#rbd-repo-domain:
-#  host.present:
-#    - ip: {{ hostip }}
-#    - names:
-#      - lang.goodrain.me
-#      - maven.goodrain.me
-
+{% set localip = grains['mip'][0] %}
 kube-apiserver-domain:
   host.present:
     - ip: {{ hostip }}
     - names:
       - kubeapi.goodrain.me
-
-#rbd-api-domain:
-#  host.present:
-#    - ip: {{ hostip }}
-#    - names:
-#      - region.goodrain.me
 
 rbd-registry-domain:
   host.present:
@@ -25,11 +13,31 @@ rbd-registry-domain:
     - names:
       - goodrain.me
 
+rbd-api-domain:
+  host.present:
+    - ip: {{ hostip }}
+    - names:
+      - region.goodrain.me
+
+uuid-localip:
+  host.present:
+    - ip: {{ localip }}
+    - names:
+      - {{ grains['uuid'] }}
+
+
+hostname-localname:
+  host.present:
+    - ip: {{ localip }}
+    - names:
+      - {{ grains['id'] }}
+
 #rbd-app-ui-domain:
 #  host.present:
 #    - ip: {{ hostip }}
 #    - names:
 #      - console.goodrain.me
+
 
 {% else %}
 # Todo:support VIP
@@ -78,7 +86,6 @@ uuid-domain:
     - ip: {{ localip }}
     - names:
       - {{ grains['uuid'] }}
-
 
 {% endif %}
 
