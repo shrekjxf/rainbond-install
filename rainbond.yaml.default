@@ -13,7 +13,6 @@ private-image-domain: goodrain.me
 reg-uuid:
 secretkey: 
 docker:
-  version: 1.12.6,fbecf51
   mirrors: 
     enabled: true
     url: "https://bf3asb4c.mirror.aliyuncs.com"
@@ -53,7 +52,7 @@ storage:
 etcd:
   server:
     image: etcd
-    version: v3.2.13
+    version: v3.2.25
     enabled: true
     bind:
       host: 
@@ -77,23 +76,23 @@ kubernetes:
     version: dev
   cni:
     image: cni
-    version: k8s_v3.7.2
+    version: k8s_v5.0.0
   api:
     image: kube-apiserver
-    version: v1.6.4
+    version: v1.10.9
   manager:
     image: kube-controller-manager
-    version: v1.6.4
+    version: v1.10.9
   schedule:
     image: kube-scheduler
-    version: v1.6.4
+    version: v1.10.9
 
 # network
 network:
   type: 
   calico:
     image: calico-node
-    version: v2.4.1
+    version: v3.3.1
     enabled: true
     bind: 
     net: 
@@ -128,7 +127,7 @@ proxy:
     version: "3.0"
   builder:
     image: builder
-    version: 3.7
+    version: v5.0
 
 # rainbond components
 rainbond-modules:

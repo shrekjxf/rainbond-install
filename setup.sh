@@ -346,17 +346,7 @@ Check_Internet(){
   fi
 }
 
-Check_Docker_Version(){
 
-  if (which docker > /dev/null 2>&1 );then
-    existDocker=$(docker -v | awk '{print $3$5}' 2>/dev/null)
-    grDocker=$(Read_Sls_File docker.version)
-    if [ "$existDocker" != "$grDocker" ];then
-      Echo_Error "Rainbond integrated customized docker, Please stop and uninstall it first."
-    fi
-  fi
-
-}
 
 Check_System_Version(){
   case $SYS_NAME in
@@ -443,9 +433,6 @@ system_check(){
   else
         ok
   fi
-
-  progress "Check system environment..."
-  Check_Docker_Version && ok
 
   # disk cpu memory
   progress "Getting Hardware information ..."
