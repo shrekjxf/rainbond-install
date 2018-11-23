@@ -14,6 +14,7 @@
 #======================================================================================================================
 [[ $DEBUG ]] && set -x
 
+ROLE=$1
 INSTALL_TYPE=${2:-"online"}
 MAIN_CONFIG="/srv/pillar/rainbond.sls"
 RAINBOND_HOMEPAGE="https://www.rainbond.com"
@@ -30,7 +31,6 @@ DEFAULT_PUBLIC_IP=${3:-"$(ip ad | grep 'inet ' | awk '{print $2}' | cut -d '/' -
 INIT_FILE="./.initialized"
 YQBIN="/usr/local/bin/yq"
 DOMAIN=$7
-ROLE=$1
 SYS_COMMON_PKGS=(ntpdate curl net-tools pwgen)
 BASE_MODULES=(common storage docker image base)
 MANAGE_MODULES=(master)
@@ -301,15 +301,6 @@ Read_Sls_File(){
 }
 
 
-#Write_Host(){
-#    ipaddr=$1
-#    name=${2:-null}
-#    if (grep $name /etc/hosts);then
-#        sed -i "/$name/d" /etc/hosts
-#    fi
-#    echo -e "$ipaddr\t$name" >> /etc/hosts
-#}
-
 Check_Service_State(){
     sname=$1
     systemctl  is-active $sname > /dev/null 2>&1
@@ -425,11 +416,7 @@ Init_system(){
     Write_Sls_File master-public-ip "${DEFAULT_PUBLIC_IP}"
   fi
 
-  # configure hostname and hosts
-  # reset /etc/hosts
-  #cp /etc/hosts /tmp/hosts.bak
   [ -f "/tmp/.new.hosts" ] || (
-      #cat /etc/hosts | grep storage > /tmp/.new.hosts
       cp /etc/hosts /tmp/hosts.bak
       cat /etc/hosts | grep storage > /opt/rainbond/install/install/salt/install/files/storage/storage.hosts
   )
@@ -437,7 +424,6 @@ Init_system(){
   MASTER_HOSTNAME=$(Read_Sls_File master-hostname)
   hostname -b $MASTER_HOSTNAME
   echo $MASTER_HOSTNAME > /etc/hostname
-  #Write_Host "${DEFAULT_LOCAL_IP}" "${MASTER_HOSTNAME}"
 
   # Get current directory
   Write_Sls_File install-script-path "$PWD"
@@ -450,7 +436,6 @@ Init_system(){
   secretkey=$(pwgen 32 1)
   Write_Sls_File secretkey "${secretkey:-auv2aequ1dahj9GameeGam9fei8Kohng}"
 
-  #judgment below uses for offline env : do not exec ntp cmd ( changed by guox 2018.5.18 ).
   if [ "$INSTALL_TYPE" == "online" ];then
     progress "update localtime"
     ntpdate ntp1.aliyun.com ntp2.aliyun.com ntp3.aliyun.com > /dev/null 2>&1 && ok
@@ -477,9 +462,7 @@ run(){
 
     STORAGE_CLIENT_ARGS=$(cat /tmp/.storage.value )
     [ -z "$STORAGE_CLIENT_ARGS" ] && STORAGE_CLIENT_ARGS="/grdata nfs rw 0 0"
-    #rm -rf /tmp/.storage.value
     Write_Sls_File storage.type ${STORAGE}
-    #Write_Sls_File storage.client_args ${STORAGE_CLIENT_ARGS:-"/grdata nfs rw 0 0"}
     Write_Sls_File storage.client_args "${STORAGE_CLIENT_ARGS}"
 
     Write_Sls_File etcd.server.bind.host ${DEFAULT_LOCAL_IP}
@@ -513,7 +496,6 @@ run(){
         Write_Sls_File network.midonet.net ${MIDONET_NET}
     fi
 
-
     Write_Sls_File lb-endpoints "http://${DEFAULT_LOCAL_IP}:10002"
 
     cat > ${PILLAR_DIR}/top.sls <<EOF
@@ -523,10 +505,8 @@ base:
 EOF
 }
 
-
 # salt-ssh install salt-master,salt-minion
 Install_Salt(){
-
   # check python env
   info "Check python environment ..."
   Check_Python_Urllib && ok
@@ -586,12 +566,6 @@ Init_Config_Func(){
     Install_Salt && ok
 }
 
-#================================ setup rainbond  =========================================
-#check_func(){
-#    progress "check system func."
-#    System_Check
-#}
-
 config(){
     if [ ! -f "$INIT_FILE" ];then
         progress "Init rainbond configure."
@@ -603,7 +577,6 @@ install(){
     fail_num=0
     step_num=1
     all_steps=${#INSTALL_MODULES[@]}
-    #progress "Start init node"
   
     for module in ${INSTALL_MODULES[@]}
     do
@@ -620,18 +593,6 @@ install(){
         sleep 1
     done
     
-    #info "Start install master services"
-    #if ! (salt "*" state.sls master);then
-    #    ((fail_num+=1))
-    #fi
-
-    #if [[ "$ROLE" =~ "worker" ]];then
-    #    info "Start install worker services"
-    #    if ! (salt "*" state.sls worker);then
-    #        ((fail_num+=1))
-    #    fi
-    #fi
-
     if [ "$fail_num" -eq 0 ];then
         if [ "$INSTALL_TYPE" == "online" ];then
             reg_status || return 0
@@ -662,10 +623,8 @@ install(){
             check_code=$(awk -v num1=$status_code -v num2=400 'BEGIN{print(num1<num2)?"0":"1"}')
             [ "$check_code" == "0" ] && (
                 if [ ! -z "$public_ip" ];then
-                    #echo_banner "http://${public_ip}:7070"
                     echo "${public_ip}" > /opt/rainbond/envs/.exip
                 else
-                    #echo_banner "http://${private_ip}:7070"
                     echo "${private_ip}" > /opt/rainbond/envs/.exip
                 fi
             ) && break
